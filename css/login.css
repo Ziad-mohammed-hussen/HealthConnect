@@ -210,3 +210,40 @@ input:focus {
     color: #fff;
     font-size: 28px;
 }
+
+@media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+        padding: 14px 0;
+    }
+
+    .main-container {
+        max-width: 100%;
+        padding: 12px;
+    }
+
+    .login-card {
+        padding: 18px 14px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    .header-section h1 {
+        font-size: 18px;
+    }
+
+    .header-section p {
+        font-size: 13px;
+    }
+
+    .footer-links {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .login-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+}

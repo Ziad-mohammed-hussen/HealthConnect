@@ -1,22 +1,7 @@
 /**
- * تسجيل دخول: أدمن/طبيب (حسابات ثابتة) + مريض (من حسابات التسجيل في المتصفح).
+ * تسجيل دخول: مريض + أدمن + طبيب من التخزين المحلي.
  */
 (function () {
-  var ACCOUNTS = {
-    admin: {
-      email: "admin@healthconnect.local",
-      password: "admin123",
-      role: "admin",
-      displayName: "مدير النظام",
-    },
-    doctor: {
-      email: "doctor@healthconnect.local",
-      password: "doctor123",
-      role: "doctor",
-      displayName: "د. سارة أحمد",
-    },
-  };
-
   var form = document.getElementById("login-form");
   var messageEl = document.getElementById("form-message");
 
@@ -69,14 +54,14 @@
       return;
     }
 
-    var account = ACCOUNTS[roleKey];
-
-    if (!account) {
-      showError("نوع المستخدم غير صالح.");
+    var staffStore = window.HCStaffStore;
+    if (!staffStore) {
+      showError("تعذر تحميل بيانات حسابات الطاقم الطبي.");
       return;
     }
-    if (email !== account.email.toLowerCase() || password !== account.password) {
-      showError("البريد أو كلمة المرور غير صحيحة، أو نوع المستخدم لا يطابق الحساب الثابت.");
+    var account = staffStore.findByEmailRole(email, roleKey);
+    if (!account || password !== account.password) {
+      showError("البريد أو كلمة المرور غير صحيحة.");
       return;
     }
 
@@ -86,7 +71,8 @@
         JSON.stringify({
           role: account.role,
           email: account.email,
-          displayName: account.displayName,
+          displayName: account.displayName || "",
+          specialty: account.specialty || "",
           at: Date.now(),
         })
       );

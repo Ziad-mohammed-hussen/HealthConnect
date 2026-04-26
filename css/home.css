@@ -525,3 +525,74 @@ color: dodgerblue;
         width: 100%;
     }
 }
+
+@media (max-width: 992px) {
+    .header {
+        padding: 10px 14px;
+        height: auto;
+        gap: 14px;
+    }
+
+    .header-right {
+        gap: 18px;
+    }
+
+    .links a {
+        font-size: 16px;
+    }
+
+    .fr-section {
+        padding: 24px 16px;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-right {
+        width: 100%;
+        align-items: center;
+    }
+
+    .links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .header-left {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .logo .fa-heart-pulse {
+        margin-right: 0;
+    }
+
+    .cards {
+        padding: 22px 16px;
+    }
+
+    .section2 {
+        padding: 30px 14px;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .text h2 {
+        font-size: 1.35rem;
+    }
+
+    .links a {
+        font-size: 14px;
+    }
+
+    .sign-btn, .login-btn, .start-btn, .service-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .section3 {
+        gap: 16px;
+    }
+}

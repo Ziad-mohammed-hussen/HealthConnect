@@ -88,3 +88,53 @@ body {
     object-fit: cover !important;
     border-radius: 50% !important;
 }
+
+.main-content .table {
+    min-width: 650px;
+}
+
+.main-content .bg-white {
+    overflow-x: auto;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        position: static;
+        height: auto;
+    }
+
+    .main-content {
+        padding: 20px 14px !important;
+    }
+
+    .side-info {
+        border-right: 0 !important;
+        border-top: 1px solid #eee;
+        padding: 16px !important;
+    }
+
+    .profile-section {
+        margin-top: 0 !important;
+        padding: 20px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .brand h4 {
+        font-size: 20px;
+    }
+
+    .header {
+        margin-bottom: 24px !important;
+        padding-bottom: 0;
+    }
+
+    .row.g-4.mb-5 {
+        margin-bottom: 20px !important;
+    }
+
+    .stat-card {
+        height: auto;
+        min-height: 120px;
+    }
+}

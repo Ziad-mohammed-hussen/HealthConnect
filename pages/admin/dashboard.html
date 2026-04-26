@@ -12,9 +12,9 @@
       <aside class="sidebar">
         <div class="logo">HealthConnect <i class="fa-solid fa-heart-pulse"></i></div>
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">لوحة التحكم <i class="fa-solid fa-table-columns"></i></a>
-          <a href="#" class="nav-item">المستخدمون <i class="fa-solid fa-users"></i></a>
-          <a href="#" class="nav-item">الأطباء <i class="fa-solid fa-user-doctor"></i></a>
+          <a href="#overview" class="nav-item active">لوحة التحكم <i class="fa-solid fa-table-columns"></i></a>
+          <a href="#appointments" class="nav-item">المستخدمون <i class="fa-solid fa-users"></i></a>
+          <a href="#doctor-accounts" class="nav-item">الأطباء <i class="fa-solid fa-user-doctor"></i></a>
         </nav>
         <div class="logout">
           <a href="../../login.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a>
@@ -34,7 +34,7 @@
           </div>
         </header>
 
-        <section class="welcome-section">
+        <section class="welcome-section" id="overview">
           <h1>لوحة تحكم الإدارة</h1>
           <p id="welcome-line">مرحباً بك، إليك ملخص نشاط النظام لليوم.</p>
         </section>
@@ -43,22 +43,22 @@
           <div class="stat-card">
             <div class="card-header"><span class="badge green">+12%</span> <i class="fa-solid fa-users"></i></div>
             <p>إجمالي المستخدمين</p>
-            <h3>1,284</h3>
+            <h3 id="total-users">1,284</h3>
           </div>
           <div class="stat-card">
             <div class="card-header"><span class="badge green">+3%</span> <i class="fa-solid fa-user-md"></i></div>
             <p>الأطباء النشطون</p>
-            <h3>42</h3>
+            <h3 id="active-doctors">42</h3>
           </div>
           <div class="stat-card">
             <div class="card-header"><span class="badge red">-5%</span> <i class="fa-solid fa-calendar-check"></i></div>
             <p>مواعيد اليوم</p>
-            <h3>28</h3>
+            <h3 id="today-appointments">28</h3>
           </div>
           <div class="stat-card">
             <div class="card-header"><span class="badge green">+8%</span> <i class="fa-solid fa-clock"></i></div>
             <p>طلبات معلقة</p>
-            <h3>15</h3>
+            <h3 id="pending-appointments">15</h3>
           </div>
         </section>
 
@@ -114,17 +114,197 @@
             <div class="action-card"><i class="fa-solid fa-chart-line"></i> تقارير الأداء</div>
           </div>
         </section>
+
+        <section class="quick-actions-section" id="appointments">
+          <h3>آخر المواعيد في النظام</h3>
+          <div class="activities-card">
+            <div class="header-right" style="margin-bottom: 12px">
+              <input id="admin-search" type="search" placeholder="بحث باسم المريض أو الطبيب..." style="padding: 10px; border: 1px solid #ddd; border-radius: 8px" />
+            </div>
+            <div id="admin-appointments-list" class="activity-list"></div>
+          </div>
+        </section>
+
+        <section class="quick-actions-section" id="doctor-accounts">
+          <h3>إدارة حسابات الأطباء</h3>
+          <div class="middle-grid">
+            <div class="activities-card">
+              <div class="card-header-main">
+                <h3>إضافة حساب طبيب</h3>
+              </div>
+              <form id="doctor-create-form">
+                <div class="appointments-toolbar">
+                  <input id="doctor-name" class="appointments-input" type="text" placeholder="الاسم (مثال: أحمد علي)" required />
+                  <input id="doctor-specialty" class="appointments-input" type="text" placeholder="التخصص (مثال: قلب)" />
+                </div>
+                <div class="appointments-toolbar">
+                  <input id="doctor-email" class="appointments-input" type="email" placeholder="البريد الإلكتروني" required />
+                  <input id="doctor-password" class="appointments-input" type="password" placeholder="كلمة المرور (6 أحرف+)" required />
+                </div>
+                <p id="doctor-create-msg" class="section-hint" style="margin-bottom: 10px"></p>
+                <button type="submit" class="add-user-btn">إضافة حساب طبيب</button>
+              </form>
+            </div>
+            <div class="chart-card">
+              <div class="card-header-main">
+                <h3>حسابات الأطباء</h3>
+                <span class="view-all" id="doctors-count">0</span>
+              </div>
+              <div id="doctors-accounts-list" class="activity-list"></div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
     <script src="../../js/auth-guard.js"></script>
+    <script src="../../js/patients-store.js"></script>
+    <script src="../../js/appointments-store.js"></script>
+    <script src="../../js/staff-store.js"></script>
     <script>
       (function () {
         var s = window.__hcSession;
+        var pStore = window.HCPatientStore;
+        var aStore = window.HCAppointmentsStore;
+        var staffStore = window.HCStaffStore;
+        var adminList = document.getElementById("admin-appointments-list");
+        var adminSearch = document.getElementById("admin-search");
+        var doctorForm = document.getElementById("doctor-create-form");
+        var doctorMsg = document.getElementById("doctor-create-msg");
+        var doctorsCountEl = document.getElementById("doctors-count");
+        var doctorsAccountsList = document.getElementById("doctors-accounts-list");
+        var navItems = document.querySelectorAll(".nav-menu .nav-item");
         var line = document.getElementById("welcome-line");
         if (line && s && s.displayName) {
           line.textContent = "مرحباً، " + s.displayName + " — إليك ملخص نشاط النظام لليوم.";
         }
+
+        function showCreateMessage(text, isError) {
+          if (!doctorMsg) return;
+          doctorMsg.textContent = text;
+          doctorMsg.style.color = isError ? "#c0392b" : "#1e8e3e";
+        }
+
+        function refreshDoctorsAccounts() {
+          if (!staffStore || !doctorsAccountsList) return;
+          var doctors = staffStore.listDoctors();
+          if (doctorsCountEl) doctorsCountEl.textContent = String(doctors.length) + " أطباء";
+          doctorsAccountsList.innerHTML = "";
+          doctors.forEach(function (doc) {
+            var row = document.createElement("div");
+            row.className = "activity-item";
+            row.innerHTML =
+              "<img src='https://via.placeholder.com/35' class='small-avatar' alt='' width='35' height='35' />" +
+              "<div class='activity-info'><strong>" +
+              doc.displayName +
+              "</strong><span>" +
+              (doc.specialty || "عام") +
+              " — " +
+              doc.email +
+              "</span></div>" +
+              "<small>نشط</small>";
+            doctorsAccountsList.appendChild(row);
+          });
+        }
+
+        if (pStore && aStore) {
+          var usersEl = document.getElementById("total-users");
+          var doctorsEl = document.getElementById("active-doctors");
+          var todayEl = document.getElementById("today-appointments");
+          var pendingEl = document.getElementById("pending-appointments");
+          var totalPatients = pStore.getAll().length;
+          var allAppointments = aStore.getAll();
+          var pending = allAppointments.filter(function (x) {
+            return x.status === "pending" || x.status === "approved";
+          }).length;
+          if (usersEl) usersEl.textContent = String(totalPatients + (staffStore ? staffStore.getAll().length : 2));
+          if (doctorsEl) doctorsEl.textContent = String(staffStore ? staffStore.listDoctors().length : 1);
+          if (todayEl) todayEl.textContent = String(allAppointments.length);
+          if (pendingEl) pendingEl.textContent = String(pending);
+
+          function renderAppointments() {
+            if (!adminList) return;
+            var q = adminSearch ? adminSearch.value.trim().toLowerCase() : "";
+            var filtered = allAppointments.filter(function (item) {
+              var key = (item.patientName + " " + item.doctorName).toLowerCase();
+              return !q || key.indexOf(q) !== -1;
+            });
+            adminList.innerHTML = "";
+            if (!filtered.length) {
+              adminList.innerHTML = "<div class='activity-item'><div class='activity-info'><strong>لا توجد نتائج</strong><span>جرّب كلمة بحث مختلفة</span></div></div>";
+              return;
+            }
+            filtered.slice(0, 10).forEach(function (item) {
+              var row = document.createElement("div");
+              row.className = "activity-item";
+              row.innerHTML =
+                "<img src='https://via.placeholder.com/35' class='small-avatar' alt='' width='35' height='35' />" +
+                "<div class='activity-info'><strong>" +
+                item.patientName +
+                "</strong><span>مع " +
+                item.doctorName +
+                " — " +
+                (item.status === "done"
+                  ? "مكتمل"
+                  : item.status === "cancelled"
+                  ? "ملغي"
+                  : item.status === "approved"
+                  ? "موافق عليه"
+                  : item.status === "rejected"
+                  ? "مرفوض"
+                  : "قيد الانتظار") +
+                "</span></div>" +
+                "<small>" +
+                aStore.toDateText(item.createdAt) +
+                "</small>";
+              adminList.appendChild(row);
+            });
+          }
+
+          renderAppointments();
+          if (adminSearch) adminSearch.addEventListener("input", renderAppointments);
+        }
+
+        if (doctorForm && staffStore) {
+          doctorForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var payload = {
+              displayName: document.getElementById("doctor-name").value,
+              specialty: document.getElementById("doctor-specialty").value,
+              email: document.getElementById("doctor-email").value,
+              password: document.getElementById("doctor-password").value,
+            };
+            var result = staffStore.createDoctor(payload);
+            if (!result.ok) {
+              showCreateMessage(result.error, true);
+              return;
+            }
+            showCreateMessage("تم إنشاء حساب الطبيب بنجاح.", false);
+            doctorForm.reset();
+            refreshDoctorsAccounts();
+          });
+        }
+
+        refreshDoctorsAccounts();
+
+        function jumpTo(id) {
+          var el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          for (var i = 0; i < navItems.length; i++) navItems[i].classList.remove("active");
+          for (var j = 0; j < navItems.length; j++) {
+            if ((navItems[j].getAttribute("href") || "").indexOf("#" + id) !== -1) {
+              navItems[j].classList.add("active");
+            }
+          }
+        }
+        for (var k = 0; k < navItems.length; k++) {
+          navItems[k].addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = (this.getAttribute("href") || "#overview").replace("#", "");
+            jumpTo(id);
+          });
+        }
+
         var logout = document.getElementById("logout-btn");
         if (logout) {
           logout.addEventListener("click", function (e) {

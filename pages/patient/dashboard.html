@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>حسابي — HealthConnect</title>
-    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/dashboard.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   </head>
   <body>
@@ -12,9 +12,9 @@
       <aside class="sidebar">
         <div class="logo">HealthConnect <i class="fa-solid fa-heart-pulse"></i></div>
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">رئيسية المريض <i class="fa-solid fa-house"></i></a>
-          <a href="#" class="nav-item">مواعيدي <i class="fa-regular fa-calendar-check"></i></a>
-          <a href="#" class="nav-item">الملف الصحي <i class="fa-solid fa-file-medical"></i></a>
+          <a href="#home" class="nav-item active">رئيسية المريض <i class="fa-solid fa-house"></i></a>
+          <a href="#appointments" class="nav-item">مواعيدي <i class="fa-regular fa-calendar-check"></i></a>
+          <a href="#health-file" class="nav-item">الملف الصحي <i class="fa-solid fa-file-medical"></i></a>
         </nav>
         <div class="logout">
           <a href="../../login.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a>
@@ -33,7 +33,7 @@
           </div>
         </header>
 
-        <section class="welcome-section">
+        <section class="welcome-section" id="home">
           <h1>مرحباً بك</h1>
           <p id="welcome-line">هنا يمكنك متابعة مواعيدك وملفك الصحي.</p>
         </section>
@@ -42,12 +42,12 @@
           <div class="stat-card">
             <div class="card-header"><span class="badge green">قادم</span> <i class="fa-solid fa-calendar-day"></i></div>
             <p>موعدك القادم</p>
-            <h3>—</h3>
+            <h3 id="next-appointment">—</h3>
           </div>
           <div class="stat-card">
             <div class="card-header"><span class="badge green">2</span> <i class="fa-solid fa-list-check"></i></div>
             <p>طلبات نشطة</p>
-            <h3>2</h3>
+            <h3 id="active-requests">0</h3>
           </div>
           <div class="stat-card">
             <div class="card-header"><span class="badge green">آمن</span> <i class="fa-solid fa-shield-heart"></i></div>
@@ -77,17 +77,172 @@
             <div class="action-card"><i class="fa-solid fa-gear"></i> الإعدادات</div>
           </div>
         </section>
+
+        <section class="quick-actions-section appointments-section" id="appointments">
+          <h3>مواعيدي الحالية</h3>
+          <p class="section-hint">تظهر هنا طلبات الحجز التي قمت بها من هذه الصفحة.</p>
+          <div class="appointments-toolbar">
+            <input id="appointments-search" type="search" class="appointments-input" placeholder="ابحث باسم الطبيب..." />
+            <select id="appointments-filter" class="appointments-select">
+              <option value="all">كل الحالات</option>
+              <option value="pending">قيد الانتظار</option>
+              <option value="approved">موافق عليه</option>
+              <option value="rejected">مرفوض</option>
+              <option value="done">مكتمل</option>
+              <option value="cancelled">ملغي</option>
+            </select>
+          </div>
+          <div id="my-appointments" class="appointments-list"></div>
+        </section>
+
+        <section class="quick-actions-section" id="health-file">
+          <h3>الملف الصحي</h3>
+          <p class="section-hint">ملخص سريع للحالة الصحية (نموذج تجريبي قابل للتطوير).</p>
+          <div class="health-grid">
+            <div class="health-item"><span>فصيلة الدم</span><strong>O+</strong></div>
+            <div class="health-item"><span>الحساسية</span><strong>لا يوجد</strong></div>
+            <div class="health-item"><span>الأدوية الحالية</span><strong>فيتامين D</strong></div>
+            <div class="health-item"><span>آخر تحديث</span><strong>اليوم</strong></div>
+          </div>
+        </section>
       </main>
     </div>
 
     <script src="../../js/auth-guard.js"></script>
+    <script src="../../js/appointments-store.js"></script>
+    <script src="../../js/staff-store.js"></script>
     <script>
       (function () {
         var s = window.__hcSession;
+        var store = window.HCAppointmentsStore;
         var line = document.getElementById("welcome-line");
+        var nextEl = document.getElementById("next-appointment");
+        var activeEl = document.getElementById("active-requests");
+        var listWrap = document.getElementById("my-appointments");
+        var searchEl = document.getElementById("appointments-search");
+        var filterEl = document.getElementById("appointments-filter");
+        var navItems = document.querySelectorAll(".nav-menu .nav-item");
         if (line && s && s.displayName) {
           line.textContent = "مرحباً، " + s.displayName + " — يمكنك من هنا إدارة مواعيدك وملفك الصحي.";
         }
+
+        function jumpTo(id) {
+          var el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          for (var i = 0; i < navItems.length; i++) navItems[i].classList.remove("active");
+          for (var j = 0; j < navItems.length; j++) {
+            if ((navItems[j].getAttribute("href") || "").indexOf("#" + id) !== -1) {
+              navItems[j].classList.add("active");
+            }
+          }
+        }
+
+        function statusText(status) {
+          if (status === "approved") return "موافق عليه";
+          if (status === "rejected") return "مرفوض";
+          if (status === "done") return "مكتمل";
+          if (status === "cancelled") return "ملغي";
+          return "قيد الانتظار";
+        }
+
+        function renderMine() {
+          if (!store || !s || !listWrap) return;
+          var all = store.getByPatientEmail(s.email || "");
+          var baseAll = all.slice();
+          var q = searchEl ? searchEl.value.trim().toLowerCase() : "";
+          var f = filterEl ? filterEl.value : "all";
+          all = all.filter(function (x) {
+            var byFilter = f === "all" ? true : x.status === f;
+            var bySearch = !q ? true : String(x.doctorName || "").toLowerCase().indexOf(q) !== -1;
+            return byFilter && bySearch;
+          });
+          var active = baseAll.filter(function (x) {
+            return x.status === "pending" || x.status === "approved";
+          });
+          if (activeEl) activeEl.textContent = String(active.length);
+          if (nextEl) {
+            nextEl.textContent = active.length
+              ? "طلب مع " + active[0].doctorName.split(" ")[0]
+              : "لا يوجد";
+          }
+
+          listWrap.innerHTML = "";
+          if (!all.length) {
+            var empty = document.createElement("p");
+            empty.textContent = "لا توجد مواعيد حالياً. يمكنك الحجز من قائمة الأطباء المقترحين.";
+            empty.className = "doctor-specialty";
+            listWrap.appendChild(empty);
+            return;
+          }
+
+          all.slice(0, 8).forEach(function (item) {
+            var row = document.createElement("article");
+            row.className = "appointment-item";
+            row.innerHTML =
+              "<div class='appointment-main'>" +
+              "<h4 class='doctor-name'>" +
+              item.doctorName +
+              "</h4>" +
+              "<p class='doctor-specialty'>" +
+              item.doctorSpecialty +
+              "</p>" +
+              "<p class='doctor-clinic'><i class='fa-solid fa-location-dot'></i> " +
+              item.clinic +
+              "</p>" +
+              "</div>" +
+              "<div class='appointment-meta'><span class='appointment-status " +
+              item.status +
+              "'>" +
+              statusText(item.status) +
+              "</span><span class='doctor-exp'>" +
+              store.toDateText(item.createdAt) +
+              "</span></div>" +
+              "</div>" +
+              "<div class='appointment-actions'>" +
+              (item.status === "pending"
+                ? "<button class='doctor-book-btn' data-cancel-id='" + item.id + "'>إلغاء الطلب</button>"
+                : "<button class='doctor-book-btn disabled-btn' disabled>لا يوجد إجراء</button>") +
+              "</div>";
+            listWrap.appendChild(row);
+          });
+        }
+
+        renderMine();
+        window.addEventListener("hc:appointment-created", renderMine);
+        if (searchEl) searchEl.addEventListener("input", renderMine);
+        if (filterEl) filterEl.addEventListener("change", renderMine);
+        if (listWrap) {
+          listWrap.addEventListener("click", function (e) {
+            var t = e.target;
+            if (!t) return;
+            var id = t.getAttribute("data-cancel-id");
+            if (!id || !store) return;
+            store.cancel(id);
+            renderMine();
+          });
+        }
+
+        for (var k = 0; k < navItems.length; k++) {
+          navItems[k].addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = (this.getAttribute("href") || "#home").replace("#", "");
+            jumpTo(id);
+          });
+        }
+
+        var bookBtn = document.querySelector(".add-user-btn");
+        if (bookBtn) {
+          bookBtn.addEventListener("click", function () {
+            jumpTo("appointments");
+          });
+        }
+        var quickBtn = document.querySelector(".schedule-btn");
+        if (quickBtn) {
+          quickBtn.addEventListener("click", function () {
+            jumpTo("home");
+          });
+        }
+
         var logout = document.getElementById("logout-btn");
         if (logout) {
           logout.addEventListener("click", function (e) {

@@ -6,7 +6,7 @@
     <title>لوحة تحكم الطبيب </title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
 
@@ -29,14 +29,25 @@
 
             <main class="col-md-7 main-content p-5">
                 <div class="header mb-5 pb-5"> <h2 class="fw-bold text-dark">لوحة تحكم الطبيب</h2>
-                    <p class="text-muted">أهلاً بك د. سارة، إليك ملخص مواعيدك لليوم</p>
+                    <p class="text-muted" id="doctor-welcome">أهلاً بك د. سارة، إليك ملخص مواعيدك لليوم</p>
+                </div>
+                <div class="d-flex gap-2 mb-3">
+                    <input id="doctor-search" class="form-control" placeholder="ابحث باسم المريض..." />
+                    <select id="doctor-status-filter" class="form-select" style="max-width: 220px;">
+                        <option value="all">كل الحالات</option>
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="approved">موافق عليه</option>
+                        <option value="rejected">مرفوض</option>
+                        <option value="done">مكتمل</option>
+                        <option value="cancelled">ملغي</option>
+                    </select>
                 </div>
                <div class="row g-4 mb-5">
     <div class="col-md-4">
         <div class="card stat-card card-blue p-4 shadow-sm">
             <span class="d-block mb-2">مواعيد اليوم</span>
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fw-bold mb-0">12</h2>
+                <h2 class="fw-bold mb-0" id="stat-today">0</h2>
                 <i class="fas fa-calendar-day fs-1 opacity-25"></i>
             </div>
         </div>
@@ -46,7 +57,7 @@
         <div class="card stat-card card-gray p-4 shadow-sm">
             <span class="d-block mb-2">استشارات مكتملة</span>
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fw-bold mb-0">45</h2>
+                <h2 class="fw-bold mb-0" id="stat-done">0</h2>
                 <i class="fas fa-check-double fs-1 opacity-25"></i>
             </div>
         </div>
@@ -56,7 +67,7 @@
         <div class="card stat-card card-light p-4 shadow-sm">
             <span class="d-block mb-2">طلبات معلقة</span>
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fw-bold mb-0">3</h2>
+                <h2 class="fw-bold mb-0" id="stat-pending">0</h2>
                 <i class="fas fa-hourglass-half fs-1 opacity-25"></i>
             </div>
         </div>
@@ -124,8 +135,8 @@
                 <div class="profile-section text-center p-5 rounded-4 border bg-light shadow-sm mt-5">
                     <img src="pic.jpg.jpeg" style="width: 120px !important; height: 120px !important; object-fit: cover;" class="rounded-circle border border-4 border-white shadow-sm mb-4 doctor-img">
                     
-                    <h5 class="fw-bold">د. سارة سميث</h5>
-                    <p class="text-muted small mb-4">أخصائية أمراض القلب والأوعية الدموية</p>
+                    <h5 class="fw-bold" id="doctor-name">د. سارة سميث</h5>
+                    <p class="text-muted small mb-4" id="doctor-specialty">أخصائية أمراض القلب والأوعية الدموية</p>
                     
                     <div class="text-start info-list p-2 border-top">
                         <div class="d-flex justify-content-between mb-2 mt-3">
@@ -135,6 +146,10 @@
                         <div class="d-flex justify-content-between mb-4">
                             <span class="text-muted small">الموقع:</span>
                             <span class="small fw-bold">عيادة وسط المدينة</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">البريد:</span>
+                            <span class="small fw-bold" id="doctor-email">doctor@healthconnect.local</span>
                         </div>
                     </div>
                     
@@ -150,8 +165,129 @@
         </div>
     </div>
 
+    <script src="../../js/auth-guard.js"></script>
+    <script src="../../js/appointments-store.js"></script>
+    <script src="../../js/staff-store.js"></script>
     <script>
         (function () {
+            var s = window.__hcSession;
+            var store = window.HCAppointmentsStore;
+            var staffStore = window.HCStaffStore;
+            var titleText = document.getElementById("doctor-welcome");
+            var doctorNameEl = document.getElementById("doctor-name");
+            var doctorSpecEl = document.getElementById("doctor-specialty");
+            var doctorEmailEl = document.getElementById("doctor-email");
+            var tbody = document.querySelector("table tbody");
+            var searchEl = document.getElementById("doctor-search");
+            var filterEl = document.getElementById("doctor-status-filter");
+            var statToday = document.getElementById("stat-today");
+            var statDone = document.getElementById("stat-done");
+            var statPending = document.getElementById("stat-pending");
+
+            function renderAppointments() {
+                if (!store || !tbody) return;
+                var doctorName = (s && s.displayName) || "د. سارة أحمد";
+                var doctorEmail = (s && s.email) || "";
+                var list = doctorEmail ? store.getByDoctorEmail(doctorEmail) : store.getByDoctorName(doctorName);
+                var q = searchEl ? searchEl.value.trim().toLowerCase() : "";
+                var f = filterEl ? filterEl.value : "all";
+                if (titleText && s && s.displayName) {
+                    titleText.textContent = "أهلاً بك " + s.displayName + "، إليك ملخص مواعيدك لليوم";
+                }
+                if (statToday) statToday.textContent = String(list.length);
+                if (statDone) {
+                    statDone.textContent = String(
+                        list.filter(function (x) {
+                            return x.status === "done";
+                        }).length
+                    );
+                }
+                if (statPending) {
+                    statPending.textContent = String(
+                        list.filter(function (x) {
+                            return x.status === "pending" || x.status === "approved";
+                        }).length
+                    );
+                }
+
+                list = list.filter(function (x) {
+                    var byFilter = f === "all" ? true : x.status === f;
+                    var bySearch = !q ? true : String(x.patientName || "").toLowerCase().indexOf(q) !== -1;
+                    return byFilter && bySearch;
+                });
+
+                tbody.innerHTML = "";
+                if (!list.length) {
+                    var empty = document.createElement("tr");
+                    empty.innerHTML = "<td colspan='5' class='text-muted py-4'>لا توجد مواعيد بهذه المعايير.</td>";
+                    tbody.appendChild(empty);
+                    return;
+                }
+                list.slice(0, 8).forEach(function (item) {
+                    var tr = document.createElement("tr");
+                    var statusHtml =
+                        item.status === "approved"
+                            ? "<span class='badge bg-primary px-3 rounded-pill'>موافق عليه</span>"
+                            : item.status === "rejected"
+                            ? "<span class='badge bg-danger px-3 rounded-pill'>مرفوض</span>"
+                            :
+                        item.status === "done"
+                            ? "<span class='badge bg-success px-3 rounded-pill'>مكتمل</span>"
+                            : item.status === "cancelled"
+                            ? "<span class='badge bg-danger px-3 rounded-pill'>ملغي</span>"
+                            : "<span class='badge bg-light text-dark border px-3 rounded-pill'>قيد الانتظار</span>";
+                    var actionsHtml =
+                        item.status === "pending"
+                            ? "<button class='btn btn-outline-primary btn-sm me-1' data-action='approve' data-id='" + item.id + "'>موافق</button><button class='btn btn-outline-danger btn-sm' data-action='reject' data-id='" + item.id + "'>غير موافق</button>"
+                            : item.status === "approved"
+                            ? "<button class='btn btn-outline-success btn-sm' data-action='done' data-id='" + item.id + "'>إتمام</button>"
+                            : item.status === "rejected"
+                            ? "<span class='text-danger fw-bold'>تم الرفض</span>"
+                            : item.status === "done"
+                            ? "<span class='text-success fw-bold'>تم</span>"
+                            : item.status === "cancelled"
+                            ? "<span class='text-danger fw-bold'>ملغي</span>"
+                            : "<span class='text-muted'>—</span>";
+                    tr.innerHTML =
+                        "<td>" + item.patientName + "</td>" +
+                        "<td class='fw-bold'>" + store.toDateText(item.createdAt) + "</td>" +
+                        "<td>" + (item.doctorSpecialty || "استشارة") + "</td>" +
+                        "<td>" + statusHtml + "</td>" +
+                        "<td>" + actionsHtml + "</td>";
+                    tbody.appendChild(tr);
+                });
+            }
+
+            if (tbody) {
+                tbody.addEventListener("click", function (e) {
+                    var target = e.target;
+                    if (!target || target.tagName !== "BUTTON") return;
+                    var id = target.getAttribute("data-id");
+                    var action = target.getAttribute("data-action");
+                    if (!id || !store) return;
+                    if (action === "approve") store.approve(id);
+                    else if (action === "reject") store.reject(id);
+                    else if (action === "done") store.markDone(id);
+                    renderAppointments();
+                });
+            }
+
+            if (s) {
+                var profile = null;
+                if (staffStore && s.email) {
+                    profile = staffStore.findByEmailRole(s.email, "doctor");
+                }
+                var nameText = (profile && profile.displayName) || s.displayName || "د. طبيب";
+                var specText = (profile && profile.specialty) || s.specialty || "طبيب عام";
+                if (doctorNameEl) doctorNameEl.textContent = nameText;
+                if (doctorSpecEl) doctorSpecEl.textContent = specText;
+                if (doctorEmailEl) doctorEmailEl.textContent = s.email || (profile ? profile.email : "-");
+            }
+
+            renderAppointments();
+            if (searchEl) searchEl.addEventListener("input", renderAppointments);
+            if (filterEl) filterEl.addEventListener("change", renderAppointments);
+
             var logout = document.getElementById("doctor-logout");
             if (logout) {
                 logout.addEventListener("click", function (e) {
