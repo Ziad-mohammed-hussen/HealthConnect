@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>حسابي — HealthConnect</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <aside class="sidebar">
+        <div class="logo">HealthConnect <i class="fa-solid fa-heart-pulse"></i></div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item active">رئيسية المريض <i class="fa-solid fa-house"></i></a>
+          <a href="#" class="nav-item">مواعيدي <i class="fa-regular fa-calendar-check"></i></a>
+          <a href="#" class="nav-item">الملف الصحي <i class="fa-solid fa-file-medical"></i></a>
+        </nav>
+        <div class="logout">
+          <a href="../../login.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a>
+        </div>
+      </aside>
+
+      <main class="content-area">
+        <header class="main-header">
+          <div class="header-right">
+            <button type="button" class="add-user-btn">حجز موعد</button>
+            <button type="button" class="schedule-btn">استشارة سريعة <i class="fa-solid fa-comments"></i></button>
+          </div>
+          <div class="header-left">
+            <img src="https://via.placeholder.com/40" class="avatar" alt="" width="40" height="40" />
+            <i class="fa-regular fa-bell icon-btn"></i>
+          </div>
+        </header>
+
+        <section class="welcome-section">
+          <h1>مرحباً بك</h1>
+          <p id="welcome-line">هنا يمكنك متابعة مواعيدك وملفك الصحي.</p>
+        </section>
+
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">قادم</span> <i class="fa-solid fa-calendar-day"></i></div>
+            <p>موعدك القادم</p>
+            <h3>—</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">2</span> <i class="fa-solid fa-list-check"></i></div>
+            <p>طلبات نشطة</p>
+            <h3>2</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">آمن</span> <i class="fa-solid fa-shield-heart"></i></div>
+            <p>الملف الصحي</p>
+            <h3>محدّث</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">24/7</span> <i class="fa-solid fa-headset"></i></div>
+            <p>الدعم</p>
+            <h3>متاح</h3>
+          </div>
+        </section>
+
+        <section class="doctors-section">
+          <h3>أطباء مقترحون</h3>
+          <p class="section-hint">البيانات مُحمّلة من ملف JSON — يمكنك تعديلها في <code>data/doctors.json</code></p>
+          <p id="doctors-load-error" class="doctors-load-error" role="status"></p>
+          <div id="doctors-grid" class="doctors-grid"></div>
+        </section>
+
+        <section class="quick-actions-section">
+          <h3>بداية سريعة</h3>
+          <div class="quick-actions-grid">
+            <div class="action-card"><i class="fa-solid fa-user-doctor"></i> البحث عن طبيب</div>
+            <div class="action-card"><i class="fa-solid fa-flask"></i> طلب تحليل</div>
+            <div class="action-card"><i class="fa-solid fa-prescription-bottle"></i> صيدليتي</div>
+            <div class="action-card"><i class="fa-solid fa-gear"></i> الإعدادات</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/auth-guard.js"></script>
+    <script>
+      (function () {
+        var s = window.__hcSession;
+        var line = document.getElementById("welcome-line");
+        if (line && s && s.displayName) {
+          line.textContent = "مرحباً، " + s.displayName + " — يمكنك من هنا إدارة مواعيدك وملفك الصحي.";
+        }
+        var logout = document.getElementById("logout-btn");
+        if (logout) {
+          logout.addEventListener("click", function (e) {
+            e.preventDefault();
+            try {
+              localStorage.removeItem("hc_session");
+            } catch (err) {}
+            window.location.href = "../../login.html";
+          });
+        }
+      })();
+    </script>
+    <script src="../../js/patient-doctors.js"></script>
+  </body>
+</html>

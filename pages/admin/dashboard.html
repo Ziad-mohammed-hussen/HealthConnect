@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة الإدارة — HealthConnect</title>
+    <link rel="stylesheet" href="../../css/dashboard.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <aside class="sidebar">
+        <div class="logo">HealthConnect <i class="fa-solid fa-heart-pulse"></i></div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item active">لوحة التحكم <i class="fa-solid fa-table-columns"></i></a>
+          <a href="#" class="nav-item">المستخدمون <i class="fa-solid fa-users"></i></a>
+          <a href="#" class="nav-item">الأطباء <i class="fa-solid fa-user-doctor"></i></a>
+        </nav>
+        <div class="logout">
+          <a href="../../login.html" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</a>
+        </div>
+      </aside>
+
+      <main class="content-area">
+        <header class="main-header">
+          <div class="header-right">
+            <button type="button" class="add-user-btn">+ إضافة مستخدم</button>
+            <button type="button" class="schedule-btn">جدولة موعد <i class="fa-regular fa-calendar-plus"></i></button>
+          </div>
+          <div class="header-left">
+            <img src="https://via.placeholder.com/40" class="avatar" alt="" width="40" height="40" />
+            <i class="fa-regular fa-bell icon-btn"></i>
+            <i class="fa-solid fa-magnifying-glass icon-btn"></i>
+          </div>
+        </header>
+
+        <section class="welcome-section">
+          <h1>لوحة تحكم الإدارة</h1>
+          <p id="welcome-line">مرحباً بك، إليك ملخص نشاط النظام لليوم.</p>
+        </section>
+
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">+12%</span> <i class="fa-solid fa-users"></i></div>
+            <p>إجمالي المستخدمين</p>
+            <h3>1,284</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">+3%</span> <i class="fa-solid fa-user-md"></i></div>
+            <p>الأطباء النشطون</p>
+            <h3>42</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge red">-5%</span> <i class="fa-solid fa-calendar-check"></i></div>
+            <p>مواعيد اليوم</p>
+            <h3>28</h3>
+          </div>
+          <div class="stat-card">
+            <div class="card-header"><span class="badge green">+8%</span> <i class="fa-solid fa-clock"></i></div>
+            <p>طلبات معلقة</p>
+            <h3>15</h3>
+          </div>
+        </section>
+
+        <div class="middle-grid">
+          <div class="activities-card">
+            <div class="card-header-main">
+              <h3>آخر النشاطات</h3>
+              <a href="#" class="view-all">عرض الكل</a>
+            </div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <img src="https://via.placeholder.com/35" class="small-avatar" alt="" width="35" height="35" />
+                <div class="activity-info">
+                  <strong>أحمد محمود</strong>
+                  <span>حجز موعد جديد مع د. سارة</span>
+                </div>
+                <small>منذ 10 دقائق</small>
+              </div>
+              <div class="activity-item">
+                <img src="https://via.placeholder.com/35" class="small-avatar" alt="" width="35" height="35" />
+                <div class="activity-info">
+                  <strong>د. ليلى حسن</strong>
+                  <span>قامت بتحديث جدول المواعيد</span>
+                </div>
+                <small>منذ 45 دقيقة</small>
+              </div>
+            </div>
+            <button type="button" class="full-width-btn">عرض سجل المستخدمين</button>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-header-main">
+              <h3>تحليلات المواعيد والمستخدمين</h3>
+              <span class="view-all">عرض نمو النشاط الأسبوعي</span>
+            </div>
+            <div class="chart-placeholder">
+              <div class="css-chart-line line-1"></div>
+              <div class="css-chart-line line-2"></div>
+            </div>
+            <div class="chart-labels">
+              <span>السبت</span> <span>الأحد</span> <span>الاثنين</span> <span>الثلاثاء</span> <span>الأربعاء</span>
+              <span>الخميس</span>
+            </div>
+          </div>
+        </div>
+
+        <section class="quick-actions-section">
+          <h3>إجراءات سريعة</h3>
+          <div class="quick-actions-grid">
+            <div class="action-card"><i class="fa-solid fa-user-plus"></i> إضافة مريض</div>
+            <div class="action-card"><i class="fa-solid fa-stethoscope"></i> دليل الأطباء</div>
+            <div class="action-card"><i class="fa-solid fa-calendar-days"></i> المواعيد القادمة</div>
+            <div class="action-card"><i class="fa-solid fa-chart-line"></i> تقارير الأداء</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/auth-guard.js"></script>
+    <script>
+      (function () {
+        var s = window.__hcSession;
+        var line = document.getElementById("welcome-line");
+        if (line && s && s.displayName) {
+          line.textContent = "مرحباً، " + s.displayName + " — إليك ملخص نشاط النظام لليوم.";
+        }
+        var logout = document.getElementById("logout-btn");
+        if (logout) {
+          logout.addEventListener("click", function (e) {
+            e.preventDefault();
+            try {
+              localStorage.removeItem("hc_session");
+            } catch (err) {}
+            window.location.href = "../../login.html";
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

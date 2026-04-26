@@ -1,0 +1,58 @@
+{
+  "doctors": [
+    {
+      "id": 1,
+      "name": "د. أحمد محمود السيد",
+      "specialty": "الباطنة والجهاز الهضمي",
+      "clinic": "القاهرة — المعادي",
+      "rating": 4.9,
+      "years": 12,
+      "image": "https://picsum.photos/seed/doctor-a/240/240"
+    },
+    {
+      "id": 2,
+      "name": "د. سارة أحمد حسن",
+      "specialty": "أمراض القلب والأوعية",
+      "clinic": "الجيزة — الدقي",
+      "rating": 4.8,
+      "years": 9,
+      "image": "https://picsum.photos/seed/doctor-b/240/240"
+    },
+    {
+      "id": 3,
+      "name": "د. كريم يوسف إبراهيم",
+      "specialty": "العظام والمفاصل",
+      "clinic": "القاهرة — مصر الجديدة",
+      "rating": 4.7,
+      "years": 15,
+      "image": "https://picsum.photos/seed/doctor-c/240/240"
+    },
+    {
+      "id": 4,
+      "name": "د. ليلى محمد فهمي",
+      "specialty": "الأطفال وحديثي الولادة",
+      "clinic": "القاهرة — مدينة نصر",
+      "rating": 5,
+      "years": 11,
+      "image": "https://picsum.photos/seed/doctor-d/240/240"
+    },
+    {
+      "id": 5,
+      "name": "د. عمر خالد عبدالله",
+      "specialty": "الجلدية والتجميل",
+      "clinic": "الإسكندرية — سموحة",
+      "rating": 4.6,
+      "years": 8,
+      "image": "https://picsum.photos/seed/doctor-e/240/240"
+    },
+    {
+      "id": 6,
+      "name": "د. نورا سامي الجندي",
+      "specialty": "النساء والتوليد",
+      "clinic": "القاهرة — التجمع الخامس",
+      "rating": 4.9,
+      "years": 14,
+      "image": "https://picsum.photos/seed/doctor-f/240/240"
+    }
+  ]
+}

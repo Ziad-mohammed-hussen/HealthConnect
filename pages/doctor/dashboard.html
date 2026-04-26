@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الطبيب </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            
+            <aside class="col-md-2 sidebar shadow-sm p-4 d-flex flex-column">
+                <div class="brand mb-5">
+                    <h4 class="text-primary fw-bold">HealthConnect <i class="fas fa-heartbeat"></i></h4>
+                </div>
+                <ul class="nav flex-column gap-3">
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-calendar-alt ms-2"></i> Appointments</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="fas fa-user-clock ms-2"></i> My Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="fas fa-user-circle ms-2"></i> Profile</a></li>
+                </ul>
+                <div class="mt-auto pt-4 border-top text-center">
+                    <a href="#" class="text-danger fw-bold text-decoration-none"><i class="fas fa-sign-out-alt ms-2"></i> Logout</a>
+                </div>
+            </aside>
+
+            <main class="col-md-7 main-content p-5">
+                <div class="header mb-5 pb-5"> <h2 class="fw-bold text-dark">لوحة تحكم الطبيب</h2>
+                    <p class="text-muted">أهلاً بك د. سارة، إليك ملخص مواعيدك لليوم</p>
+                </div>
+               <div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card stat-card card-blue p-4 shadow-sm">
+            <span class="d-block mb-2">مواعيد اليوم</span>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="fw-bold mb-0">12</h2>
+                <i class="fas fa-calendar-day fs-1 opacity-25"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card card-gray p-4 shadow-sm">
+            <span class="d-block mb-2">استشارات مكتملة</span>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="fw-bold mb-0">45</h2>
+                <i class="fas fa-check-double fs-1 opacity-25"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card card-light p-4 shadow-sm">
+            <span class="d-block mb-2">طلبات معلقة</span>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="fw-bold mb-0">3</h2>
+                <i class="fas fa-hourglass-half fs-1 opacity-25"></i>
+            </div>
+        </div>
+    </div>
+</div>
+     
+
+<div class="bg-white p-4 rounded-4 shadow-sm border">
+                    <div class="d-flex justify-content-between align-items-center mb-4 p-2">
+                        <h5 class="fw-bold m-0">جدول المواعيد القادمة</h5>
+                        <button class="btn btn-light border btn-sm">إدارة المواعيد</button>
+                    </div>
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr class="small text-muted text-center">
+                                <th>المريض</th>
+                                <th>التوقيت</th>
+                                <th>نوع الجلسة</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr>
+                                <td>أحمد محمد</td>
+                                <td class="fw-bold">09:00 ص</td>
+                                <td>استشارة أولى</td>
+                                <td><span class="badge bg-primary px-3 rounded-pill">مؤكد</span></td>
+                                <td><button class="btn btn-outline-success btn-sm">إتمام</button></td>
+                            </tr>
+                            <tr>
+                                <td>سارة خالد</td>
+                                <td class="fw-bold">10:30 ص</td>
+                                <td>متابعة دورية</td>
+                                <td><span class="badge bg-light text-dark border px-3 rounded-pill">قيد الانتظار</span></td>
+                                <td><i class="fas fa-check text-success mx-2"></i> <i class="fas fa-times text-danger"></i></td>
+                            </tr>
+                            <tr>
+                                <td>يوسف علي</td>
+                                <td class="fw-bold">11:45 ص</td>
+                                <td>فحص طارئ</td>
+                                <td><span class="badge bg-primary px-3 rounded-pill">مؤكد</span></td>
+                                <td><button class="btn btn-outline-success btn-sm">إتمام</button></td>
+                            </tr>
+                            <tr>
+                                <td>ليلى حسن</td>
+                                <td class="fw-bold">01:15 م</td>
+                                <td>متابعة دورية</td>
+                                <td><span class="badge bg-primary px-3 rounded-pill">مؤكد</span></td>
+                                <td><button class="btn btn-outline-success btn-sm">إتمام</button></td>
+                            </tr>
+                            <tr>
+                                <td>عمر فاروق</td>
+                                <td class="fw-bold">02:30 م</td>
+                                <td>مراجعة تحاليل</td>
+                                <td><span class="badge bg-light text-dark border px-3 rounded-pill">قيد الانتظار</span></td>
+                                <td><i class="fas fa-check text-success mx-2"></i> <i class="fas fa-times text-danger"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <aside class="col-md-3 side-info p-4 border-start bg-white d-flex flex-column h-100">
+                <div class="profile-section text-center p-5 rounded-4 border bg-light shadow-sm mt-5">
+                    <img src="pic.jpg.jpeg" style="width: 120px !important; height: 120px !important; object-fit: cover;" class="rounded-circle border border-4 border-white shadow-sm mb-4 doctor-img">
+                    
+                    <h5 class="fw-bold">د. سارة سميث</h5>
+                    <p class="text-muted small mb-4">أخصائية أمراض القلب والأوعية الدموية</p>
+                    
+                    <div class="text-start info-list p-2 border-top">
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="text-muted small">ساعات العمل:</span>
+                            <span class="small fw-bold">09:00 - 05:00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="text-muted small">الموقع:</span>
+                            <span class="small fw-bold">عيادة وسط المدينة</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 py-2 rounded-3">تعديل البيانات</button>
+                    <button class="btn btn-outline-secondary w-100 py-2 rounded-3 mt-2">تغيير الحالة</button>
+                </div>
+
+                <div class="mt-auto text-center small text-muted pb-3">
+                    © 2026 HealthConnect. All rights reserved.
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+</body>
+</html>

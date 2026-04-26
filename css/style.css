@@ -1,0 +1,90 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-color: #fcfdfe;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+
+
+.sidebar {
+    height: 100vh;
+    background: #fff;
+    position: sticky;
+    top: 0;
+}
+
+.nav-link {
+    padding: 15px 20px;
+    border-radius: 12px;
+}
+
+.nav-link.active {
+    background-color: #f1f7ff;
+    color: #0d6efd !important;
+    font-weight: bold;
+}
+
+
+.stat-card {
+    border-radius: 20px;
+    height: 140px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* مواعيد اليوم */
+.card-blue {
+    background-color: #0d6efd !important;
+    border: none !important;
+}
+.card-blue * {
+    color: white !important;
+}
+
+/* استشارات مكتملة */
+.card-gray {
+    background-color: #6c757d !important;
+}
+.card-gray * {
+    color: white !important;
+}
+
+/* طلبات معلقة */
+.card-light {
+    background-color: #cfe2ff !important;
+    border: none !important;
+}
+.card-light * {
+    color: #084298 !important;
+}
+
+
+
+
+
+.header {
+    margin-bottom: 80px !important;
+    padding-bottom: 20px;
+}
+
+.row.g-4.mb-5 {
+    margin-bottom: 50px !important;
+}
+
+
+
+
+
+
+.doctor-img {
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
